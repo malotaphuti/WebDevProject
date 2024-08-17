@@ -1,3 +1,6 @@
 from django.contrib import admin
+from rest_framework.permissions import BasePermission
 
-# Register your models here.
+class IsAdmin(BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.user_type == 'admin'
