@@ -12,10 +12,6 @@
             <li><a href="{% url 'faq_detail' faq.pk %}">{{ faq.question }}</a></li>
         {% endfor %}
     </ul>
-    {% if user.is_authenticated %}
-        <a href="{% url 'faq_create' %}">Add New FAQ</a>
-    {% else %}
-        <h4>View all...</h4>
-    {% endif %}
+    <a href="{% url 'faq_create' %}">Add New FAQ</a>
 </body>
 </html>

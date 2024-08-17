@@ -5,38 +5,63 @@ from django.shortcuts import redirect
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
-from .forms import UserRegistrationForm
+from .forms import RegistrationForm
+from .models import CustomUser
+from .forms import LoginForm
+from .utils import send_verification_code  
+from rest_framework import viewsets
+from .models import CustomUser
+from .serializers import UserSerializer
+
 # VIEWS START HERE
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUser.objects.all()
+    serializer_class = UserSerializer
 
 def home(request):
     return render(request, 'home.html')
 
 def login(request):
     if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
-        user = authenticate(request, email=email, password=password)
-        if user is not None:
-            auth_login(request, user)
-            return redirect('home')
-        else:
-            return render(request, 'login.html', {'error': 'Invalid email or password'})
-    return render(request, 'login.html')
+        form = LoginForm(request, data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            return redirect('dashboard')  # Redirect to a dashboard or home page
+    else:
+        form = LoginForm()
+    return render(request, 'auth/login.html', {'form': form})
 
 def logout(request):
     auth_logout(request)
     return redirect('login')
 
+
 def register(request):
     if request.method == 'POST':
-        form = UserRegistrationForm(request.POST)
+        form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password'])
+            user.set_password(form.cleaned_data['password1'])
+            user.is_active = False
             user.save()
-            login(request, user)
-            return redirect('home')
+            send_verification_code(user)
+            return redirect('verify_account')
     else:
-        form = UserRegistrationForm()
-    return render(request, 'register.html', {'form': form})
+        form = RegistrationForm()
+        print(form)  # Debugging line
+    return render(request, 'auth/register.html', {'form': form})
 
+
+def verify_account(request):
+    if request.method == 'POST':
+        code = request.POST.get('code')
+        try:
+            user = CustomUser.objects.get(verification_code=code)
+            user.is_active = True
+            user.save()
+            return redirect('login')
+        except CustomUser.DoesNotExist:
+            # Handle error (e.g., render with an error message)
+            pass
+    return render(request, 'auth/verify.html')
