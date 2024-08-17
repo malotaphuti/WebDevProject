@@ -7,6 +7,6 @@ class ModerationForm(forms.Form):
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
     ]
-    
+    #test
     status = forms.ChoiceField(choices=STATUS_CHOICES, required=True)
     feedback = forms.CharField(widget=forms.Textarea, required=False)
