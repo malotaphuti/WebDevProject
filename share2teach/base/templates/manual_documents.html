@@ -1,0 +1,12 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>Documents in Folder</h2>
+  <ul>
+    {% for document in documents %}
+      <li>
+        <a href="{{ document.path }}">{{ document.title }}</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

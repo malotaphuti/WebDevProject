@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h2>Review Document: {{ document.title }}</h2>
+
+  <p>Description: {{ document.description }}</p>
+  <a href="{{ document.file_path }}">Download Document</a>
+
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Submit Review</button>
+  </form>
+{% endblock %}
