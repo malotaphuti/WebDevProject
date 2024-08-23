@@ -127,7 +127,7 @@ def upload_document(request):
         form = DocumentUploadForm()
 
     return render(request, 'upload_document.html', {'form': form})
-
+    #comment
 def verify_account(request):
     if request.method == 'POST':
         code = request.POST.get('code')
