@@ -1,6 +1,7 @@
 from django.db import models
-<<<<<<< HEAD
 from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser, Group, Permission
+
 
 class Document(models.Model):
     STATUS_CHOICES = [
@@ -10,7 +11,7 @@ class Document(models.Model):
     ]
     
     title = models.CharField(max_length=255)
-    file_path = models.CharField(max_length=255)  # Store the file path manually
+    file = models.FileField(upload_to='documents/')  # Use FileField to handle file uploads
     description = models.TextField()
     uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='uploaded_documents')
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='Pending')
@@ -18,8 +19,6 @@ class Document(models.Model):
 
     def __str__(self):
         return self.title
-=======
-from django.contrib.auth.models import AbstractUser, Group, Permission
 
 class CustomUser(AbstractUser):
     groups = models.ManyToManyField(
@@ -49,5 +48,3 @@ class CustomUser(AbstractUser):
 
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default=EDUCATOR)
     verification_code = models.CharField(max_length=6, blank=True, null=True)
-
->>>>>>> fd96fa894f51faa6a89861552f97c3c68ac90a1d

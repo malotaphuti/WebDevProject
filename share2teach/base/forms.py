@@ -1,20 +1,18 @@
 # base/forms.py
 from django import forms
-from .models import Document
+from .models import Document, CustomUser
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+
 
 class ModerationForm(forms.Form):
     STATUS_CHOICES = [
         ('Approved', 'Approved'),
         ('Rejected', 'Rejected'),
     ]
-    #test
     status = forms.ChoiceField(choices=STATUS_CHOICES, required=True)
     feedback = forms.CharField(widget=forms.Textarea, required=False)
 
-from django import forms
-from django.contrib.auth.forms import UserCreationForm
-from .models import CustomUser
-from django.contrib.auth.forms import AuthenticationForm
 
 class RegistrationForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=True)
@@ -38,12 +36,29 @@ class RegistrationForm(UserCreationForm):
 class LoginForm(AuthenticationForm):
     username = forms.EmailField(max_length=254, required=True, widget=forms.EmailInput(attrs={'autofocus': True}))
     password = forms.CharField(label="Password", strip=False, widget=forms.PasswordInput)
-    
+
     def clean(self):
         email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
         if email and password:
-            self.user_cache = authenticate(self.request, username=email, password=password)
             if self.user_cache is None:
                 raise forms.ValidationError("Invalid email or password")
         return self.cleaned_data
+
+
+class DocumentUploadForm(forms.ModelForm):
+    """Form for uploading documents"""
+    class Meta:
+        model = Document
+        fields = ['title', 'description', 'file']
+        widgets = {
+            'title': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control'}),
+            'file': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+        }
+
+    def clean_file(self):
+        file = self.cleaned_data.get('file')
+        if not file:
+            raise forms.ValidationError("No file selected!")
+        return file

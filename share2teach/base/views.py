@@ -1,21 +1,15 @@
 <<<<<<< HEAD
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib.auth import login as auth_login
-=======
-from django.shortcuts import render, redirect, HttpResponse
-from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
->>>>>>> fd96fa894f51faa6a89861552f97c3c68ac90a1d
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.views import View
-<<<<<<< HEAD
 from .models import Document
 from .forms import ModerationForm
 
 import os
 
 # Existing views
-=======
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth import login
 from .forms import RegistrationForm
@@ -30,19 +24,17 @@ from .serializers import UserSerializer
 class UserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = UserSerializer
->>>>>>> fd96fa894f51faa6a89861552f97c3c68ac90a1d
 
 def home(request):
     return render(request, 'home.html')
 
-<<<<<<< HEAD
-=======
+
 def login(request):
     if request.method == 'POST':
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
-            login(request, user)
+            auth_login(request, user)
             return redirect('dashboard')  # Redirect to a dashboard or home page
     else:
         form = LoginForm()
