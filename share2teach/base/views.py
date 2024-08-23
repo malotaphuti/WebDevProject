@@ -97,7 +97,7 @@ def upload_folder_documents(request):
 def moderate_documents(request):
     """Allow moderators to view and moderate documents"""
     documents = Document.objects.filter(status='Pending')
-    
+    #comment
     if request.method == 'POST':
         doc_id = request.POST.get('doc_id')
         action = request.POST.get('action')
