@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Review Document</title>
+    <title>Upload Document</title>
     <link rel="stylesheet" href="{% static 'styles.css' %}"> <!-- Link to your CSS file -->
+    <!-- Ensure that the path to your static file is correct -->
 </head>
 <body>
     <header>
-        <h1>Review Document</h1>
+        <h1>Upload Document</h1>
         <nav>
             <ul>
                 <li><a href="{% url 'home' %}">Home</a></li>
@@ -20,19 +21,12 @@
 
     <main>
         <section>
-            <h2>{{ document.title }}</h2>
-            <p><strong>Description:</strong> {{ document.description }}</p>
-            <p><strong>Uploaded by:</strong> {{ document.uploaded_by.username }}</p>
-            <p><strong>Status:</strong> {{ document.get_status_display }}</p>
-            <p><strong>Uploaded file:</strong> <a href="{{ document.file.url }}" target="_blank">Download/View Document</a></p>
-        </section>
-
-        <section>
-            <h3>Moderation Form</h3>
-            <form method="POST" action="{% url 'review_document' document.id %}">
+            <h2>Upload a New Document</h2>
+            <!-- The form below is set up correctly for file uploads -->
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
-                {{ form.as_p }}  <!-- This will render the form fields -->
-                <button type="submit">Submit Review</button>
+                {{ form.as_p }} <!-- This will render the form fields correctly -->
+                <button type="submit">Upload Document</button>
             </form>
         </section>
 

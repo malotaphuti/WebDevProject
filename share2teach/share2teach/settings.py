@@ -118,8 +118,19 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 STATIC_URL = '/static/'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'base', 'static')]
+
+# Uncomment and use this if you're using Whitenoise for serving static files
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

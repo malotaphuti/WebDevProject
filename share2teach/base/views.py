@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from django.shortcuts import render, redirect, HttpResponse, get_object_or_404
 from django.contrib.auth import login as auth_login
 from django.conf import settings
@@ -45,7 +44,7 @@ def logout(request):
     return redirect('login')
 
 
->>>>>>> fd96fa894f51faa6a89861552f97c3c68ac90a1d
+
 def register(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -54,27 +53,17 @@ def register(request):
             user.set_password(form.cleaned_data['password1'])
             user.is_active = False
             user.save()
-            send_verification_code(user)
+            #send_verification_code(user)
             return redirect('verify_account')
     else:
         form = RegistrationForm()
-        print(form)  # Debugging line
     return render(request, 'auth/register.html', {'form': form})
-
-<<<<<<< HEAD
-def login(request):
-    # Your login logic here
-    return render(request, 'login.html')
-
-
-# Document Moderation Views
 
 @login_required
 def pending_documents(request):
     """List all pending documents for the moderator to review"""
     documents = Document.objects.filter(status='Pending')
     return render(request, 'pending_documents.html', {'documents': documents})
-
 
 @login_required
 def review_document(request, document_id):
@@ -93,7 +82,6 @@ def review_document(request, document_id):
 
     return render(request, 'review_document.html', {'document': document, 'form': form})
 
-
 @login_required
 def upload_folder_documents(request):
     """List files from a manually uploaded folder"""
@@ -103,7 +91,42 @@ def upload_folder_documents(request):
     documents = [{'title': file, 'path': os.path.join(folder_path, file)} for file in files]
 
     return render(request, 'manual_documents.html', {'documents': documents})
-=======
+
+@login_required
+@user_passes_test(is_moderator)
+def moderate_documents(request):
+    """Allow moderators to view and moderate documents"""
+    documents = Document.objects.filter(status='Pending')
+    
+    if request.method == 'POST':
+        doc_id = request.POST.get('doc_id')
+        action = request.POST.get('action')
+        document = get_object_or_404(Document, id=doc_id)
+        document.moderated_by = request.user
+        if action == 'publish':
+            document.status = 'Published'
+        elif action == 'reject':
+            document.status = 'Rejected'
+        document.save()
+        return redirect('moderate_documents')
+
+    return render(request, 'moderate_documents.html', {'documents': documents})
+
+
+@login_required
+def upload_document(request):
+    """Handle the document upload"""
+    if request.method == 'POST':
+        form = DocumentUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            document = form.save(commit=False)
+            document.uploaded_by = request.user
+            document.save()
+            return redirect('pending_documents')  # Redirect to the pending documents list or another page
+    else:
+        form = DocumentUploadForm()
+
+    return render(request, 'upload_document.html', {'form': form})
 
 def verify_account(request):
     if request.method == 'POST':
@@ -117,4 +140,3 @@ def verify_account(request):
             # Handle error (e.g., render with an error message)
             pass
     return render(request, 'auth/verify.html')
->>>>>>> fd96fa894f51faa6a89861552f97c3c68ac90a1d

@@ -1,4 +1,3 @@
-# base/forms.py
 from django import forms
 from .models import Document, CustomUser
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
